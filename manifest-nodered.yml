@@ -1,4 +1,28 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nodered-settings
+data:
+  settings.js: |
+    module.exports = {
+      credentialSecret: process.env.NODE_RED_CREDENTIAL_SECRET,
+      adminAuth: {
+        type: "credentials",
+        users: [
+            {
+                username: process.env.NODE_RED_ADMIN_USERNAME || "admin",
+                password: process.env.NODE_RED_ADMIN_HASHED_PASSWORD || "",
+                permissions: "*"
+            }
+        ]
+      },
+      httpNodeAuth: {
+        user: process.env.NODE_RED_HTTP_USERNAME || "http",
+        pass: process.env.NODE_RED_HTTP_HASHED_PASSWORD || "",
+      },
+    };
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nodered-data
@@ -36,24 +60,47 @@ spec:
           - name: TZ
             value: "Asia/Dubai"
           - name: NODE_RED_CREDENTIAL_SECRET
-            value: "unsafe"
+            valueFrom:
+              secretKeyRef:
+                name: nodered-secret
+                key: credentials
           - name: NODE_RED_ADMIN_USERNAME
-            value: "admin"
+            valueFrom:
+              secretKeyRef:
+                name: nodered-secret
+                key: admin-username
           - name: NODE_RED_ADMIN_HASHED_PASSWORD
-            value: "unsafe"
+            valueFrom:
+              secretKeyRef:
+                name: nodered-secret
+                key: admin-password
           - name: NODE_RED_HTTP_USERNAME
-            value: "http"
+            valueFrom:
+              secretKeyRef:
+                name: nodered-secret
+                key: http-username
           - name: NODE_RED_HTTP_HASHED_PASSWORD
-            value: "unsafe"
+            valueFrom:
+              secretKeyRef:
+                name: nodered-secret
+                key: http-password
         ports:
           - containerPort: 1880
         volumeMounts:
           - name: nodered-data-volume
             mountPath: /data
+          - name: nodered-settings
+            mountPath: /data/settings.js
+            subPath: settings.js
+
       volumes:
-      - name: nodered-data-volume
-        persistentVolumeClaim:
-          claimName: nodered-data
+        - name: nodered-data-volume
+          persistentVolumeClaim:
+            claimName: nodered-data
+        - name: nodered-settings
+          configMap:
+            name: nodered-settings
+
 ---
 apiVersion: v1
 kind: Service
@@ -76,16 +123,16 @@ metadata:
     kubernetes.io/tls-acme: 'true'
 spec:
   rules:
-  - host: nodered.nxu.ae
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: node-red
-            port:
-              number: 1880
+    - host: nodered.nxu.ae
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: node-red
+                port:
+                  number: 1880
   ingressClassName: nginx
   tls:
     - hosts:

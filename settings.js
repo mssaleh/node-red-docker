@@ -16,4 +16,4 @@ module.exports = {
     user: process.env.NODE_RED_HTTP_USERNAME || "http",
     pass: process.env.NODE_RED_HTTP_HASHED_PASSWORD || "",
   },
-}
+};
