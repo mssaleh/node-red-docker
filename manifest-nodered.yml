@@ -30,7 +30,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: node-red
-        image: ghcr.io/mssaleh/nodered-docker:main
+        image: ghcr.io/mssaleh/node-red-docker:main
         imagePullPolicy: Always
         env:
           - name: TZ
