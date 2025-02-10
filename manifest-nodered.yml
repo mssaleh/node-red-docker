@@ -33,10 +33,7 @@ spec:
         image: ghcr.io/mssaleh/node-red-docker:main
         command: ["/bin/sh","-c"]
         args:
-          - >
-            if [ ! -f /data/settings.js ]; then
-              cp /usr/src/node-red/config/settings.js /data/settings.js;
-            fi
+          - cp /usr/src/node-red/config/settings.js /data/settings.js;
         volumeMounts:
           - name: nodered-data-volume
             mountPath: /data
