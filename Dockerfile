@@ -1,4 +1,4 @@
-FROM nodered/node-red:latest-debian
+FROM nodered/node-red:latest
 
 # Copy package.json to the WORKDIR so npm builds all
 # of your added nodes modules for Node-RED
@@ -18,10 +18,6 @@ COPY settings.js /usr/src/node-red/config/settings.js
 # COPY flows_cred.json /data/flows_cred.json
 # COPY flows.json /data/flows.json
 
-COPY docker-entrypoint.sh /usr/src/node-red/docker-entrypoint.sh
-RUN chmod +x /usr/src/node-red/docker-entrypoint.sh
-
 EXPOSE 1880
 
-ENTRYPOINT ["/usr/src/node-red/docker-entrypoint.sh"]
 CMD ["npm", "start", "--", "--userDir", "/data"]
