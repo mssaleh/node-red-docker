@@ -5,12 +5,16 @@ FROM nodered/node-red:latest
 WORKDIR /data
 # COPY package.json /data
 # RUN npm install --unsafe-perm --no-update-notifier --no-fund --only=production
-RUN npm install --unsafe-perm --no-update-notifier --no-fund --only=production node-red-contrib-postgresql
-RUN npm install --unsafe-perm --no-update-notifier --no-fund --only=production bcryptjs
+RUN npm install --unsafe-perm --no-update-notifier --no-fund --only=production bcryptjs node-red-contrib-postgresql node-red-contrib-redis node-red-contrib-mssql-plus node-red-node-base64 node-red-contrib-time-switch 
 
 WORKDIR /usr/src/node-red
 RUN mkdir -p /usr/src/node-red/config
+
 COPY settings.js /usr/src/node-red/config/settings.js
+
+COPY entrypoint.sh /usr/src/node-red/entrypoint.sh
+RUN chmod +x /usr/src/node-red/entrypoint.sh
+
 # Copy _your_ Node-RED project files into place
 # NOTE: This will only work if you DO NOT later mount /data as an external volume.
 #       If you need to use an external volume for persistence then
@@ -20,4 +24,5 @@ COPY settings.js /usr/src/node-red/config/settings.js
 
 EXPOSE 1880
 
-CMD ["npm", "start", "--", "--userDir", "/data"]
+ENTRYPOINT ["/usr/src/node-red/entrypoint.sh"]
+CMD ["npm", "start", "--", "--userDir", "/data", "--settings", "/usr/src/node-red/config/settings.js"]

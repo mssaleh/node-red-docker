@@ -28,15 +28,6 @@ spec:
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
-      initContainers:
-      - name: copy-settings
-        image: ghcr.io/mssaleh/node-red-docker:main
-        command: ["/bin/sh","-c"]
-        args:
-          - cp /usr/src/node-red/config/settings.js /data/settings.js;
-        volumeMounts:
-          - name: nodered-data-volume
-            mountPath: /data
       containers:
       - name: node-red
         image: ghcr.io/mssaleh/node-red-docker:main

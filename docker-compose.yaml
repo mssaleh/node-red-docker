@@ -2,7 +2,7 @@ services:
   node-red:
     image: ghcr.io/mssaleh/node-red-docker:main
     container_name: node-red
-    restart: unlress-stopped
+    restart: unless-stopped
     ports:
       - "1880:1880"
     environment:
@@ -12,11 +12,9 @@ services:
       # or load them from a .env file or Docker secrets.
       NODE_RED_CREDENTIAL_SECRET: "${NODE_RED_CREDENTIAL_SECRET}"
       NODE_RED_ADMIN_USERNAME: "${NODE_RED_ADMIN_USERNAME}"
-      # To create the hashed password, manually run this javascript `node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" your-password-here`
-      NODE_RED_ADMIN_HASHED_PASSWORD: "${NODE_RED_ADMIN_HASHED_PASSWORD}"
+      NODE_RED_ADMIN_PASSWORD: "${NODE_RED_ADMIN_HASHED_PASSWORD}"
       NODE_RED_HTTP_USERNAME: "${NODE_RED_HTTP_USERNAME}"
-      # To create the hashed password, manually run this javascript `node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" your-password-here`
-      NODE_RED_HTTP_HASHED_PASSWORD: "${NODE_RED_HTTP_HASHED_PASSWORD}"
+      NODE_RED_HTTP_PASSWORD: "${NODE_RED_HTTP_HASHED_PASSWORD}"
     volumes:
       - ./nodered-data:/data
     user: "1000:1000"
