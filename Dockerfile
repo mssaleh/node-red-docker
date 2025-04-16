@@ -12,8 +12,8 @@ RUN mkdir -p /usr/src/node-red/config
 
 COPY settings.js /usr/src/node-red/config/settings.js
 
-COPY entrypoint.sh /usr/src/node-red/entrypoint.sh
-RUN chmod +x /usr/src/node-red/entrypoint.sh
+# Copy entrypoint script and ensure it has the right permissions
+COPY --chmod=755 entrypoint.sh /usr/src/node-red/entrypoint.sh
 
 # Copy _your_ Node-RED project files into place
 # NOTE: This will only work if you DO NOT later mount /data as an external volume.
